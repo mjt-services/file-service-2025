@@ -1,0 +1,16 @@
+services:
+  file:
+    image: ${IMAGE_TAG}
+    container_name: ${CONTAINER_NAME}
+    restart: always
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ${FILES_DIR}:/var/www/html
+    ports:
+      - "8732:8732"
+    stdin_open: true
+    tty: true
