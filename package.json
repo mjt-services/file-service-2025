@@ -1,0 +1,48 @@
+{
+  "name": "@mjt-services/file-service-2025",
+  "version": "2025.3.30-1231",
+  "sideEffects": false,
+  "description": "API service",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "docs": "typedoc src/index.ts",
+    "build-docs": "pnpm run build && pnpm run docs",
+    "changelog": "./scripts/changes.sh > CHANGELOG.md",
+    "changelog-version": "pnpm run changelog && ./scripts/version.sh",
+    "publish": "pnpm run build-docs && pnpm run changelog-version",
+    "build": "pnpm run docker-build",
+    "check": "tsc --noEmit -w",
+    "start": "tsx src/index.ts",
+    "dev": "docker compose --env-file ../.env --env-file ./.env build && docker compose --env-file ../.env --env-file ./.env up",
+    "docker-build": "scripts/build.sh",
+    "docker-run": "scripts/run.sh",
+    "docker-push": "scripts/push.sh",
+    "log": "docker logs -f api"
+  },
+  "keywords": [],
+  "author": "Matt Taylor (https://mjt.dev)",
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "@mjt-engine/assert": "github:mjt-engine/assert",
+    "@mjt-engine/byte": "github:mjt-engine/byte",
+    "@mjt-engine/message": "github:mjt-engine/message",
+    "@mjt-engine/object": "github:mjt-engine/object",
+    "@mjt-engine/parse": "github:mjt-engine/parse",
+    "@mjt-services/textgen-common-2025": "github:mjt-services/textgen-common-2025",
+    "@types/node": "^20.10.3",
+    "better-sse": "^0.14.1",
+    "hono": "^4.7.5",
+    "mime-types": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typedoc": "^0.27.9",
+    "typescript": "^5.8.2",
+    "undici": "^5.28.2"
+  }
+}

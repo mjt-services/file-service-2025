@@ -1,13 +1,39 @@
-FROM alpine:latest
+# Use the latest Node.js Alpine as the base image
+FROM node:alpine AS base
 
-# Install nginx (plus optional busybox-extras for better directory listings)
-RUN apk add --no-cache nginx
+# Set environment variables for Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV=/opt/venv
 
-# Create necessary directories
-RUN mkdir -p /run/nginx /var/www/html
+# Install necessary system dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    curl \
+    build-base \
+    && python3 -m venv $VIRTUAL_ENV \
+    && . $VIRTUAL_ENV/bin/activate \
+    && pip install --no-cache-dir --upgrade pip setuptools wheel vastai
 
-# Copy your custom nginx.conf
-COPY nginx.conf /etc/nginx/nginx.conf
+# Make the virtual environment default for Python
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Run nginx in foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Set the working directory
+WORKDIR /app
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Copy package manager lockfile and configuration files
+COPY pnpm-lock.yaml package.json tsconfig.json ./
+
+
+# Install Node.js dependencies with pnpm, respecting the lockfile
+RUN pnpm install --frozen-lockfile
+
+# Copy the rest of the application source code
+COPY src ./src
+
+# Default command to run the application
+CMD ["pnpm", "start"]

@@ -5,12 +5,13 @@ services:
     restart: always
     env_file:
       - ./.env
+      - ./../.env
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ${FILES_DIR}:/var/www/html
+      - ${FILES_DIR}:/files
     ports:
-      - "8732:8732"
+      - "${FILE_PORT}:${FILE_PORT}"
     stdin_open: true
     tty: true
